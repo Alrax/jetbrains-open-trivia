@@ -1,9 +1,10 @@
-export interface Question {
-  id: string;
-  question: string;
+export interface Questions {
+  type: 'multiple' | 'boolean';
   category: string;
-  difficulty: 'Easy' | 'Medium' | 'Hard';
-  answer: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  question: string;
+  correct_answer: string;
+  incorrect_answers: string[];
 }
 
 export interface CategoryData {
@@ -13,7 +14,7 @@ export interface CategoryData {
 }
 
 export interface DifficultyData {
-    difficulty: 'Easy' | 'Medium' | 'Hard';
+    difficulty: 'easy' | 'medium' | 'hard';
     count: number;
     color: '#22c55e' | '#f59e0b' | '#ef4444';
 }

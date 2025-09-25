@@ -17,16 +17,16 @@ export function NavBar() {
           <li>Answer a few trivia questions while you're here!</li>
         </ul>
       </div>
-    <TabsList className="grid w-full grid-cols-3 relative overflow-hidden rounded-md border bg-muted/40 p-1 backdrop-blur supports-[backdrop-filter]:bg-muted/30">
-      <TabsTrigger value="categories" className="flex items-center gap-2">
+    <TabsList className="grid w-full grid-cols-3 relative overflow-hidden rounded-md border bg-muted/40 backdrop-blur supports-[backdrop-filter]:bg-muted/30">
+      <TabsTrigger value="categories" className="flex items-center justify-center p-1">
         <List className="h-4 w-4" />
         Questions
       </TabsTrigger>
-      <TabsTrigger value="category-distribution" className="flex items-center gap-2">
+      <TabsTrigger value="category-distribution" className="flex items-center justify-center p-1">
         <PieChart className="h-4 w-4" />
         Categories
       </TabsTrigger>
-      <TabsTrigger value="difficulty-distribution" className="flex items-center gap-2">
+      <TabsTrigger value="difficulty-distribution" className="flex items-center justify-center p-1">
         <BarChart3 className="h-4 w-4" />
         Difficulties
       </TabsTrigger>

@@ -1,28 +1,31 @@
-import { categories, mockQuestions } from '../../data/mockData';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { useCallback, memo } from 'react';
+import type { Questions } from '../../data/types';
 
 interface CategoryCardsProps {
+  questions: Questions[];
+  loading?: boolean;
   selectedCategory: string | null;
   onSelect: (category: string | null) => void;
 }
 
 // Helper functions kept pure (no hooks) so they can be reused / tested.
-const getCategoryCount = (category: string) =>
-  mockQuestions.filter(q => q.category === category).length;
+const getCategoryCount = (questions: Questions[], category: string) =>
+  questions.filter(q => q.category === category).length;
 
-const getDifficultyBreakdown = (category: string) => {
-  const categoryQuestions = mockQuestions.filter(q => q.category === category);
+const getDifficultyBreakdown = (questions: Questions[], category: string) => {
+  const categoryQuestions = questions.filter(q => q.category === category);
   return {
-    Easy: categoryQuestions.filter(q => q.difficulty === 'Easy').length,
-    Medium: categoryQuestions.filter(q => q.difficulty === 'Medium').length,
-    Hard: categoryQuestions.filter(q => q.difficulty === 'Hard').length,
+    easy: categoryQuestions.filter(q => q.difficulty === 'easy').length,
+    medium: categoryQuestions.filter(q => q.difficulty === 'medium').length,
+    hard: categoryQuestions.filter(q => q.difficulty === 'hard').length,
   };
 };
 
-export const CategoryCards = memo(function CategoryCards({ selectedCategory, onSelect }: CategoryCardsProps) {
+export const CategoryCards = memo(function CategoryCards({ questions, loading, selectedCategory, onSelect }: CategoryCardsProps) {
+  const categories = Array.from(new Set(questions.map(q => q.category))).sort();
   const handleToggle = useCallback((category: string) => {
     onSelect(selectedCategory === category ? null : category);
   }, [onSelect, selectedCategory]);
@@ -41,9 +44,12 @@ export const CategoryCards = memo(function CategoryCards({ selectedCategory, onS
           <Button size="sm" variant="ghost" className="h-6 px-2" onClick={() => onSelect(null)}>Hide</Button>
         )}
       </div>
-      {categories.map(category => {
-        const count = getCategoryCount(category);
-        const breakdown = getDifficultyBreakdown(category);
+      {loading && (
+        <div className="text-xs text-muted-foreground px-2 py-1">Loading categories…</div>
+      )}
+      {!loading && categories.map(category => {
+        const count = getCategoryCount(questions, category);
+  const breakdown = getDifficultyBreakdown(questions, category);
         return (
           <Card
             key={category}
@@ -65,9 +71,9 @@ export const CategoryCards = memo(function CategoryCards({ selectedCategory, onS
             </CardHeader>
             <CardContent className="py-1 pb-0 pt-0">
               <div className="flex flex-wrap items-center gap-1 text-[10px] leading-tight">
-                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 px-1 py-0.5 font-normal">Easy : {breakdown.Easy}</Badge>
-                <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 px-1 py-0.5 font-normal">Medium : {breakdown.Medium}</Badge>
-                <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 px-1 py-0.5 font-normal">Hard : {breakdown.Hard}</Badge>
+                <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 px-1 py-0.5 font-normal">Easy : {breakdown.easy}</Badge>
+                <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200 px-1 py-0.5 font-normal">Medium : {breakdown.medium}</Badge>
+                <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200 px-1 py-0.5 font-normal">Hard : {breakdown.hard}</Badge>
               </div>
             </CardContent>
           </Card>

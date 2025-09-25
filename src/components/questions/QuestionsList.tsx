@@ -1,4 +1,4 @@
-import { mockQuestions } from '../../data/mockData.ts';
+import { useQuestions } from '../../data/openTdbClient.ts';
 import { Card, CardContent } from '../ui/card.tsx';
 import { Badge } from '../ui/badge.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table.tsx';
@@ -7,17 +7,21 @@ import { Button } from '../ui/button.tsx';
 import { ChevronsUpDown } from 'lucide-react';
 import { CategoryCards } from './CategoryCards.tsx';
 
-const DIFFICULTY_ORDER = ['Easy', 'Medium', 'Hard'] as const;
+const DIFFICULTY_ORDER = ['easy', 'medium', 'hard'] as const;
 
 export function QuestionsList() {
+    const { data: questions, loading, error } = useQuestions(50);
     const [sortKey, setSortKey] = useState<'category' | 'difficulty' | null>(null);
     const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
+    const filteredQuestions = useMemo(() => {
+        if (!selectedCategory || selectedCategory === 'all') return questions;
+        return questions.filter(q => q.category === selectedCategory);
+    }, [questions, selectedCategory]);
+
     const sortedQuestions = useMemo(() => {
-        const base = selectedCategory && selectedCategory !== 'all'
-            ? mockQuestions.filter(q => q.category === selectedCategory)
-            : mockQuestions;
+        const base = filteredQuestions;
         if (!sortKey) return [...base];
         return [...base].sort((a, b) => {
             if (sortKey === 'category') {
@@ -30,12 +34,12 @@ export function QuestionsList() {
             const cmp = ai - bi;
             return sortDir === 'asc' ? cmp : -cmp;
         });
-    }, [sortKey, sortDir, selectedCategory]);
+    }, [filteredQuestions, sortKey, sortDir]);
 
     // Manual incremental loading state
     const CHUNK_SIZE = 25;
     const [visibleCount, setVisibleCount] = useState(CHUNK_SIZE);
-    useEffect(() => { setVisibleCount(CHUNK_SIZE); }, [sortKey, sortDir, selectedCategory]);
+    useEffect(() => { setVisibleCount(CHUNK_SIZE); }, [sortKey, sortDir, selectedCategory, filteredQuestions]);
     const showMore = () => setVisibleCount(v => Math.min(v + CHUNK_SIZE, sortedQuestions.length));
     const allVisible = visibleCount >= sortedQuestions.length;
 
@@ -85,19 +89,29 @@ export function QuestionsList() {
             <div className="flex flex-col md:flex-row md:items-start gap-6">
                 {/* Left column */}
                 <div className="md:w-1/4">
-                    <CategoryCards selectedCategory={selectedCategory} onSelect={setSelectedCategory} />
+                    <CategoryCards questions={questions} loading={loading} selectedCategory={selectedCategory} onSelect={setSelectedCategory} />
                 </div>
                 {/* Right column */}
                 <div className="md:flex-1">
                     <Card className="h-full border-none shadow-none bg-transparent">
                         <CardContent className="p-0">
                             <div className="pr-1">
-                                {!selectedCategory && (
-                                    <div className="rounded-md p-10 text-center text-sm text-muted-foreground bg-background/50">
-                                        Select a category to see corresponding questions
+                                {error && (
+                                    <div className="rounded-md p-6 text-center text-sm text-red-600 bg-red-50 border border-red-200">
+                                        Failed to load questions. {error.message}
                                     </div>
                                 )}
-                                {selectedCategory && (
+                                {loading && !error && (
+                                    <div className="rounded-md p-10 text-center text-sm text-muted-foreground bg-background/50 animate-pulse">
+                                        Loading questions…
+                                    </div>
+                                )}
+                                {!loading && !error && selectedCategory && filteredQuestions.length === 0 && (
+                                    <div className="rounded-md p-10 text-center text-sm text-muted-foreground bg-background/50">
+                                        No questions for this category.
+                                    </div>
+                                )}
+                                {!loading && !error && selectedCategory && filteredQuestions.length > 0 && (
                                     <div className="overflow-auto">
                                         <Table>
                                             <TableHeader>
@@ -131,22 +145,22 @@ export function QuestionsList() {
                                             </TableHeader>
                                             <TableBody>
                                                 {sortedQuestions.slice(0, visibleCount).map((q, idx) => (
-                                                    <TableRow key={q.id}>
+                                                    <TableRow key={q.question + q.correct_answer + idx}>
                                                         <TableCell className="text-muted-foreground">{idx + 1}</TableCell>
                                                         <TableCell className="whitespace-normal max-w-[260px]">{q.question}</TableCell>
                                                         <TableCell>{q.category}</TableCell>
                                                         <TableCell>
-                                                            {q.difficulty === 'Easy' && (
+                                                            {q.difficulty === 'easy' && (
                                                                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Easy</Badge>
                                                             )}
-                                                            {q.difficulty === 'Medium' && (
+                                                            {q.difficulty === 'medium' && (
                                                                 <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Medium</Badge>
                                                             )}
-                                                            {q.difficulty === 'Hard' && (
+                                                            {q.difficulty === 'hard' && (
                                                                 <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">Hard</Badge>
                                                             )}
                                                         </TableCell>
-                                                        <TableCell className="whitespace-normal max-w-[200px]">{q.answer}</TableCell>
+                                                        <TableCell className="whitespace-normal max-w-[200px]">{q.correct_answer}</TableCell>
                                                     </TableRow>
                                                 ))}
                                             </TableBody>
