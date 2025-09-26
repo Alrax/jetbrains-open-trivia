@@ -2,8 +2,9 @@ import './App.css';
 import { NavBar } from './components/NavBar';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { QuestionsList } from '@/components/questions/QuestionsList';
-import { CategoryDistribution } from '@/components/CategoryDistribution';
-import { DifficultyDistribution } from '@/components/DifficultyDistribution';
+import { lazy, Suspense } from 'react';
+const CategoryDistribution = lazy(() => import('@/components/CategoryDistribution').then(m => ({ default: m.CategoryDistribution })));
+const DifficultyDistribution = lazy(() => import('@/components/DifficultyDistribution').then(m => ({ default: m.DifficultyDistribution })));
 import { useQuestions, useGlobalCategoryCounts } from '@/data/openTdbClient';
 
 function App() {
@@ -19,10 +20,14 @@ function App() {
               <QuestionsList data={questions.data} loading={questions.loading} error={questions.error} />
             </TabsContent>
             <TabsContent value="category-distribution" className="space-y-4">
-              <CategoryDistribution counts={categories.data} loading={categories.loading} error={categories.error} />
+              <Suspense fallback={<div className="text-sm text-muted-foreground">Loading chart…</div>}>
+                <CategoryDistribution counts={categories.data} loading={categories.loading} error={categories.error} />
+              </Suspense>
             </TabsContent>
             <TabsContent value="difficulty-distribution" className="space-y-4">
-              <DifficultyDistribution data={questions.data} loading={questions.loading} error={questions.error} />
+              <Suspense fallback={<div className="text-sm text-muted-foreground">Loading chart…</div>}>
+                <DifficultyDistribution data={questions.data} loading={questions.loading} error={questions.error} />
+              </Suspense>
             </TabsContent>
           </div>
         </Tabs>

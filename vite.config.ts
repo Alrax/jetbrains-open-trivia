@@ -18,4 +18,16 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          recharts: ['recharts'],
+          radix: ['@radix-ui/react-select', '@radix-ui/react-tabs', '@radix-ui/react-slot'],
+          react: ['react', 'react-dom']
+        },
+      },
+    },
+    chunkSizeWarningLimit: 1000,
+  },
 })
