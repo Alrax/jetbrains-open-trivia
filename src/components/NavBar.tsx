@@ -18,7 +18,7 @@ export function NavBar() {
         </ul>
       </div>
     <TabsList className="grid w-full grid-cols-3 relative overflow-hidden rounded-md border bg-muted/40 backdrop-blur supports-[backdrop-filter]:bg-muted/30">
-      <TabsTrigger value="categories" className="flex items-center justify-center p-1">
+      <TabsTrigger value="questions" className="flex items-center justify-center p-1">
         <List className="h-4 w-4" />
         Questions
       </TabsTrigger>

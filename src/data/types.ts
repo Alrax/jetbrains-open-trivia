@@ -18,3 +18,8 @@ export interface DifficultyData {
     count: number;
     color: '#22c55e' | '#f59e0b' | '#ef4444';
 }
+
+export interface CategoryCount {
+  category: string
+  count: number
+}

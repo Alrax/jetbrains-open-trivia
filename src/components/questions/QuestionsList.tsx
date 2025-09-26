@@ -106,6 +106,11 @@ export function QuestionsList() {
                                         Loading questions…
                                     </div>
                                 )}
+                                {!loading && !error && !selectedCategory && (
+                                    <div className="rounded-md p-10 text-center text-sm text-muted-foreground bg-background/50">
+                                        Click a filter to show corresponding questions.
+                                    </div>
+                                )}
                                 {!loading && !error && selectedCategory && filteredQuestions.length === 0 && (
                                     <div className="rounded-md p-10 text-center text-sm text-muted-foreground bg-background/50">
                                         No questions for this category.
