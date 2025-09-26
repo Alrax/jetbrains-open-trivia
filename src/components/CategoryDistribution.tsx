@@ -1,10 +1,9 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { useGlobalCategoryCounts } from '@/data/openTdbClient';
+import type { CategoryCount } from '@/data/types';
 
-export function CategoryDistribution() {
-  const { data: counts, loading, error } = useGlobalCategoryCounts();
+export function CategoryDistribution({ counts, loading, error }: { counts: CategoryCount[]; loading: boolean; error: Error | null }) {
   const categoryData = counts.map((row, index) => ({
     category: row.category,
     count: row.count,

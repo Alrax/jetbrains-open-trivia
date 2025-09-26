@@ -1,7 +1,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { useQuestions } from '@/data/openTdbClient';
+import type { Questions } from '@/data/types';
 
 const DIFFICULTY_COLORS: Record<string, string> = {
   easy: '#22c55e',
@@ -9,8 +9,7 @@ const DIFFICULTY_COLORS: Record<string, string> = {
   hard: '#ef4444'
 };
 
-export function DifficultyDistribution() {
-  const { data: questions, loading, error } = useQuestions(50);
+export function DifficultyDistribution({ data: questions, loading, error }: { data: Questions[]; loading: boolean; error: Error | null }) {
   const order = ['easy', 'medium', 'hard'] as const;
   const difficultyData = order.map(d => ({
     difficulty: d,

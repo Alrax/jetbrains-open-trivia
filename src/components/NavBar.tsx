@@ -14,7 +14,6 @@ export function NavBar() {
         <ul className="text-sm text-muted-foreground leading-relaxed max-w-2xl list-disc list-inside text-left">
           <li>Explore a list of questions sortable by category and difficulty.</li>
           <li>View distributions of questions by category or difficulty.</li>
-          <li>Answer a few trivia questions while you're here!</li>
         </ul>
       </div>
     <TabsList className="grid w-full grid-cols-3 relative overflow-hidden rounded-md border bg-muted/40 backdrop-blur supports-[backdrop-filter]:bg-muted/30">

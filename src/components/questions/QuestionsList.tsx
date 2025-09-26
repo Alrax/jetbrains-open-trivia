@@ -1,4 +1,3 @@
-import { useQuestions } from '../../data/openTdbClient.ts';
 import { Card, CardContent } from '../ui/card.tsx';
 import { Badge } from '../ui/badge.tsx';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../ui/table.tsx';
@@ -6,11 +5,11 @@ import { useState, useMemo, useEffect } from 'react';
 import { Button } from '../ui/button.tsx';
 import { ChevronsUpDown } from 'lucide-react';
 import { CategoryCards } from './CategoryCards.tsx';
+import type { Questions } from '../../data/types';
 
 const DIFFICULTY_ORDER = ['easy', 'medium', 'hard'] as const;
 
-export function QuestionsList() {
-    const { data: questions, loading, error } = useQuestions(50);
+export function QuestionsList({ data: questions, loading, error }: { data: Questions[]; loading: boolean; error: Error | null }) {
     const [sortKey, setSortKey] = useState<'category' | 'difficulty' | null>(null);
     const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
